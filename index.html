@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>messy place</title>
+
+    <style>
+
+        * {
+            outline: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+            padding: 0;
+        }
+
+        #wrapper {
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+
+        #inner {
+            display: table-cell;
+            width: 100%;
+            height: 100%;
+
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .textarea {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+
+            font-size: 1.2rem;
+            font-family: monospace;
+
+            max-width: 600px;
+            max-height: 600px;
+
+            border: 0;
+        }
+
+        .highlight {
+            background: yellow;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="pen/pen.css">
+
+</head>
+<body>
+
+    <div id="wrapper">
+
+        <div id="inner">
+            <div id="content" class="textarea"></div>
+        </div>
+
+    </div>
+
+    <script src="pen/pen.js"></script>
+    <script src="pen/markdown.js"></script>
+
+    <script>
+
+        var options = {
+            editor: document.getElementById('content'),
+            textarea: '<textarea name="content"></textarea>'
+        }
+
+        var editor = new Pen(options)
+            editor.focus()
+
+    </script>
+
+    <script type="text/javascript" src="rangy/rangy-core.js"></script>
+    <script type="text/javascript" src="rangy/rangy-classapplier.js"></script>
+    <script type="text/javascript" src="rangy/rangy-highlighter.js"></script>
+    <script type="text/javascript" src="rangy/rangy-serializer.js"></script>
+
+    <script>
+
+        window.onload = function() {
+
+            rangy.init();
+
+            highlighter = rangy.createHighlighter();
+
+            highlighter.addClassApplier(rangy.createClassApplier("highlight", {
+                ignoreWhiteSpace: true,
+                tagNames: ["span", "a"]
+            }));
+
+            highlighter.addClassApplier(rangy.createClassApplier("note", {
+                ignoreWhiteSpace: true,
+                elementTagName: "a",
+                elementProperties: {
+                    href: "#",
+                    onclick: function() {
+                        var highlight = highlighter.getHighlightForElement(this);
+                        if (window.confirm("Delete this note (ID " + highlight.id + ")?")) {
+                            highlighter.removeHighlights( [highlight] );
+                        }
+                        return false;
+                    }
+                }
+            }));
+
+        }
+
+        function highlightSelectedText() {
+            highlighter.highlightSelection("highlight");
+        }
+
+        function removeHighlightFromSelectedText() {
+            highlighter.unhighlightSelection();
+        }
+
+    </script>
+
+</body>
+</html>
